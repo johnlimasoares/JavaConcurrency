@@ -18,13 +18,14 @@ public class ServidorTarefas {
 	public ServidorTarefas() throws IOException{
 		System.out.println("servidor iniciado");
 		this.servidorSocket = new ServerSocket(12345);
-		this.newCachedThreadPool = Executors.newCachedThreadPool();//Gerencia as threads conforme demanda
+		//this.newCachedThreadPool = Executors.newCachedThreadPool();//Gerencia as threads conforme demanda
+		this.newCachedThreadPool = Executors.newFixedThreadPool(4, new FactoryThreads());
 	}
 	
 	public void rodar() throws IOException {
 		while(this.isRun){
 			Socket socket = servidorSocket.accept();
-			DistribuirTarefas distribuidorTarefas = new DistribuirTarefas(socket, this);
+			DistribuirTarefas distribuidorTarefas = new DistribuirTarefas(socket, this, newCachedThreadPool);
 			newCachedThreadPool.execute(distribuidorTarefas);
 		}		
 	}
